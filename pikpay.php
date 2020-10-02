@@ -41,3 +41,15 @@ function pikpay_action_links( $links ) {
 	// Merge our new link with the default ones
 	return array_merge( $plugin_links, $links );
 }
+
+
+// A way to stop the form checkout submit event via JQuery could not be found.
+// To simulate this a fake error needs to be thrown so that the generate monri toke can be added to the 'monri-token' form field.
+// Once the token is added checkout process will be triggered via JQuery.
+add_action('woocommerce_after_checkout_validation', 'fake_checkout_form_error');
+function fake_checkout_form_error($posted) {
+
+    if ($_POST['monri-token'] == 'not-set') {
+        wc_add_notice( __( "set_monri_token_notice", 'fake_error' ), 'error');
+    }
+}
