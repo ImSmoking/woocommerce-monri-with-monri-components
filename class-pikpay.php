@@ -791,7 +791,9 @@ class WC_PikPay extends WC_Payment_Gateway
         $card_installments = $_POST['pikpay-card-installments'];
         $monri_token = $_POST['monri-token'];
 
+
         $validation = $this->monri_token_validation($monri_token);
+
         if ($validation["response"] == "false") {
             wc_add_notice($validation["message"], 'error');
             return;
@@ -1031,8 +1033,7 @@ class WC_PikPay extends WC_Payment_Gateway
             $lang = $this->get_sr_translation();
         }
 
-        //Credit card validation
-        if (!$this->luhn_check($monri_token)) {
+        if (empty($monri_token)) {
             $validation['response'] = "false";
             $validation['message'] = $lang['TRANSACTION_FAILED'];
             return $validation;
