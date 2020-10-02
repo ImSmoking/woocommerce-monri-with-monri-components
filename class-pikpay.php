@@ -1474,8 +1474,7 @@ class WC_PikPay extends WC_Payment_Gateway
                             function monriTokenHandler(token) {
 
                                 // Insert the token ID into the form so it gets submitted to the server
-                                let monriTokenElement = jQuery('#monri-token');
-                                monriTokenElement.val(token.id);
+                                jQuery('#monri-token').val(token.id);
 
                             }
 
@@ -1486,7 +1485,7 @@ class WC_PikPay extends WC_Payment_Gateway
                     jQuery(document.body).on('checkout_error', function () {
 
                         // Trigger the submit of the checkout form If the thrown wc error is 'set_monri_token_notice' and
-                        // no error was returend by  monri.createToken.
+                        // no error was returend by  monri.createToken. Else remove the 'monri token' html elemente so a new one can be generated on the next form submit.
                         var error_text = jQuery('.woocommerce-error').find('li').first().text();
 
                         if (error_text.trim() == 'set_monri_token_notice') {
@@ -1506,6 +1505,7 @@ class WC_PikPay extends WC_Payment_Gateway
                         var displayError = document.getElementById('card-errors');
                         if (event.error) {
                             displayError.textContent = event.error.message;
+                            jQuery('#monri-token').remove();
                         } else {
                             displayError.textContent = '';
                         }
