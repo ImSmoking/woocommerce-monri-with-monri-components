@@ -791,6 +791,12 @@ class WC_PikPay extends WC_Payment_Gateway
         $card_installments = $_POST['pikpay-card-installments'];
         $monri_token = $_POST['monri-token'];
 
+        $validation = $this->monri_token_validation($monri_token);
+        if ($validation["response"] == "false") {
+            wc_add_notice($validation["message"], 'error');
+            return;
+        }
+
         /* Monri components integrated, this code is no longer needed.
         $card_number = str_replace(array(' ', '-'), '', $_POST['pikpay-card-number']);
         $card_expiry = str_replace(array('/', ' '), '', $_POST['pikpay-card-expiry']);
@@ -1015,6 +1021,23 @@ class WC_PikPay extends WC_Payment_Gateway
 
     }
 
+    function monri_token_validation($monri_token){
+
+        if ($this->form_language == "en") {
+            $lang = $this->get_en_translation();
+        } elseif ($this->form_language == "ba-hr" || $this->form_language == "hr") {
+            $lang = $this->get_ba_hr_translation();
+        } elseif ($this->form_language == "sr") {
+            $lang = $this->get_sr_translation();
+        }
+
+        //Credit card validation
+        if (!$this->luhn_check($monri_token)) {
+            $validation['response'] = "false";
+            $validation['message'] = $lang['TRANSACTION_FAILED'];
+            return $validation;
+        }
+    }
     /**
      * Validate WooCommerce Form fields
      **/
